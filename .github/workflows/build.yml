@@ -38,3 +38,12 @@ jobs:
         with:
           name: Meow 1.21
           path: ./meow-1.21.jar
+      - name: Release Meow
+        if: github.event_name != 'pull_request'
+        uses: marvinpinto/action-automatic-releases@master
+        with:
+          title: "Meow 1.21"
+          automatic_release_tag: "ver-1.21"
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          files: "./leaf-1.21.jar"
+          prerelease: false
