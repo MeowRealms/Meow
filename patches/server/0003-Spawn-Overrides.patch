@@ -1,0 +1,186 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: ItsFlicker <1812496278@qq.com>
+Date: Mon, 5 Aug 2024 14:09:52 +0800
+Subject: [PATCH] Spawn-Overrides
+
+
+diff --git a/src/main/java/net/minecraft/world/entity/monster/Husk.java b/src/main/java/net/minecraft/world/entity/monster/Husk.java
+index 53114ceb212ea341b227f59ebd302d7c4fd84f2a..7a8a31ad36d13572046cee5938fa5b0fb405e2e4 100644
+--- a/src/main/java/net/minecraft/world/entity/monster/Husk.java
++++ b/src/main/java/net/minecraft/world/entity/monster/Husk.java
+@@ -1,6 +1,7 @@
+ package net.minecraft.world.entity.monster;
+ 
+ import net.minecraft.core.BlockPos;
++import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.sounds.SoundEvent;
+ import net.minecraft.sounds.SoundEvents;
+ import net.minecraft.util.RandomSource;
+@@ -15,6 +16,8 @@ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.item.ItemStack;
+ import net.minecraft.world.level.Level;
+ import net.minecraft.world.level.ServerLevelAccessor;
++import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
++import org.meowrealms.meow.utils.SpawnOverrides;
+ 
+ public class Husk extends Zombie {
+ 
+@@ -77,7 +80,7 @@ public class Husk extends Zombie {
+     }
+ 
+     public static boolean checkHuskSpawnRules(EntityType<Husk> type, ServerLevelAccessor world, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
+-        return checkMonsterSpawnRules(type, world, spawnReason, pos, random) && (MobSpawnType.isSpawner(spawnReason) || world.canSeeSky(pos));
++        return checkMonsterSpawnRules(type, world, spawnReason, pos, random) && (MobSpawnType.isSpawner(spawnReason) || world.canSeeSky(pos) || SpawnOverrides.isStructureAtPosition((ServerLevel) world, BuiltinStructures.DESERT_PYRAMID, pos)); // Meow
+     }
+ 
+     @Override
+diff --git a/src/main/java/net/minecraft/world/level/chunk/ChunkGenerator.java b/src/main/java/net/minecraft/world/level/chunk/ChunkGenerator.java
+index 00ed0d5ad535faa36111ab28bb0cf1317eb067ec..6aa3e8fd2ce20d41bb324eae7ac65d249574a44a 100644
+--- a/src/main/java/net/minecraft/world/level/chunk/ChunkGenerator.java
++++ b/src/main/java/net/minecraft/world/level/chunk/ChunkGenerator.java
+@@ -77,6 +77,7 @@ import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStruct
+ import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement;
+ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
+ import org.apache.commons.lang3.mutable.MutableBoolean;
++import org.meowrealms.meow.utils.SpawnOverrides;
+ 
+ public abstract class ChunkGenerator {
+ 
+@@ -536,6 +537,12 @@ public abstract class ChunkGenerator {
+         while (iterator.hasNext()) {
+             Entry<Structure, LongSet> entry = (Entry) iterator.next();
+             Structure structure = (Structure) entry.getKey();
++            // Meow start
++            WeightedRandomList<MobSpawnSettings.SpawnerData> res = SpawnOverrides.test(accessor, entry.getValue(), group, structure, pos);
++            if (res != null) {
++                return res;
++            }
++            // Meow end
+             StructureSpawnOverride structurespawnoverride = (StructureSpawnOverride) structure.spawnOverrides().get(group);
+ 
+             if (structurespawnoverride != null) {
+diff --git a/src/main/java/org/meowrealms/meow/utils/SpawnOverrides.java b/src/main/java/org/meowrealms/meow/utils/SpawnOverrides.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..473cbfa46fce1633f201963c83e01fb788f21c12
+--- /dev/null
++++ b/src/main/java/org/meowrealms/meow/utils/SpawnOverrides.java
+@@ -0,0 +1,119 @@
++package org.meowrealms.meow.utils;
++
++import it.unimi.dsi.fastutil.longs.LongSet;
++import net.minecraft.core.BlockPos;
++import net.minecraft.core.SectionPos;
++import net.minecraft.core.registries.Registries;
++import net.minecraft.resources.ResourceKey;
++import net.minecraft.resources.ResourceLocation;
++import net.minecraft.server.level.ServerLevel;
++import net.minecraft.util.RandomSource;
++import net.minecraft.util.random.WeightedRandomList;
++import net.minecraft.world.entity.*;
++import net.minecraft.world.entity.monster.piglin.PiglinBrute;
++import net.minecraft.world.level.LevelAccessor;
++import net.minecraft.world.level.StructureManager;
++import net.minecraft.world.level.biome.MobSpawnSettings;
++import net.minecraft.world.level.block.Blocks;
++import net.minecraft.world.level.chunk.status.ChunkStatus;
++import net.minecraft.world.level.levelgen.Heightmap;
++import net.minecraft.world.level.levelgen.structure.BuiltinStructures;
++import net.minecraft.world.level.levelgen.structure.Structure;
++import net.minecraft.world.level.levelgen.structure.StructureSpawnOverride;
++import net.minecraft.world.level.levelgen.structure.StructureStart;
++import net.minecraft.world.level.levelgen.structure.StructureType;
++import org.apache.commons.lang3.tuple.Pair;
++
++import java.lang.reflect.InvocationTargetException;
++import java.lang.reflect.Method;
++import java.util.ArrayList;
++import java.util.HashMap;
++import java.util.List;
++import java.util.Map;
++import java.util.function.BooleanSupplier;
++
++public class SpawnOverrides {
++    final private static Map<Pair<MobCategory, ResourceKey<Structure>>, Pair<BooleanSupplier, StructureSpawnOverride>> carpetOverrides = new HashMap<>();
++
++    static {
++        for (Method method : SpawnPlacements.class.getDeclaredMethods()){
++            if (method.getName().equals("register")) {
++                method.setAccessible(true);
++                try {
++                    method.invoke(null, EntityType.PIGLIN_BRUTE, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, (SpawnPlacements.SpawnPredicate<PiglinBrute>) SpawnOverrides::checkPiglinSpawnRules);
++                } catch (IllegalAccessException | InvocationTargetException e) {
++                    throw new RuntimeException(e);
++                }
++                break;
++            }
++        }
++        addOverride(() -> true, MobCategory.MONSTER, BuiltinStructures.DESERT_PYRAMID, StructureSpawnOverride.BoundingBoxType.STRUCTURE,
++            WeightedRandomList.create(new MobSpawnSettings.SpawnerData(EntityType.HUSK, 1, 1, 1))
++        );
++        addOverride(() -> false, MobCategory.MONSTER, BuiltinStructures.END_CITY, StructureSpawnOverride.BoundingBoxType.PIECE,
++            WeightedRandomList.create(new MobSpawnSettings.SpawnerData(EntityType.SHULKER, 10, 4, 4))
++        );
++        addOverride(() -> true, MobCategory.MONSTER, BuiltinStructures.BASTION_REMNANT, StructureSpawnOverride.BoundingBoxType.PIECE,
++            WeightedRandomList.create(
++                new MobSpawnSettings.SpawnerData(EntityType.PIGLIN_BRUTE, 5, 1, 2),
++                new MobSpawnSettings.SpawnerData(EntityType.PIGLIN, 10, 2, 4),
++                new MobSpawnSettings.SpawnerData(EntityType.HOGLIN, 2, 1, 2)
++            )
++        );
++
++    }
++
++    public static boolean checkPiglinSpawnRules(EntityType<PiglinBrute> type, LevelAccessor world, MobSpawnType spawnReason, BlockPos pos, RandomSource random) {
++        return !world.getBlockState(pos.below()).is(Blocks.NETHER_WART_BLOCK);
++    }
++
++    public static void addOverride(BooleanSupplier when, MobCategory cat, ResourceKey<Structure> poo,
++                                   StructureSpawnOverride.BoundingBoxType type, WeightedRandomList<MobSpawnSettings.SpawnerData> spawns) {
++        carpetOverrides.put(Pair.of(cat, poo), Pair.of(when, new StructureSpawnOverride(type, spawns)));
++    }
++
++    public static WeightedRandomList<MobSpawnSettings.SpawnerData> test(StructureManager structureFeatureManager, LongSet foo,
++                                                                        MobCategory cat, Structure confExisting, BlockPos where) {
++        ResourceLocation resource = structureFeatureManager.registryAccess().registryOrThrow(Registries.STRUCTURE).getKey(confExisting);
++        ResourceKey<Structure> key = ResourceKey.create(Registries.STRUCTURE, resource);
++        final Pair<BooleanSupplier, StructureSpawnOverride> spawnData = carpetOverrides.get(Pair.of(cat, key));
++        if (spawnData == null || !spawnData.getKey().getAsBoolean()) return null;
++        StructureSpawnOverride override = spawnData.getRight();
++        if (override.boundingBox() == StructureSpawnOverride.BoundingBoxType.STRUCTURE) {
++            if (structureFeatureManager.getStructureAt(where, confExisting).isValid())
++                return override.spawns();
++        } else {
++            List<StructureStart> starts = new ArrayList<>(1);
++            structureFeatureManager.fillStartsForStructure(confExisting, foo, starts::add);
++            for (StructureStart start : starts) {
++                if (start != null && start.isValid() && structureFeatureManager.structureHasPieceAt(where, start)) {
++                    return override.spawns();
++                }
++            }
++        }
++        return null;
++    }
++
++    public static boolean isStructureAtPosition(ServerLevel level, ResourceKey<Structure> structureKey, BlockPos pos)
++    {
++        final Structure fortressFeature = level.registryAccess().registryOrThrow(Registries.STRUCTURE).get(structureKey);
++        if (fortressFeature == null) {
++            return false;
++        }
++        return level.structureManager().getStructureAt(pos, fortressFeature).isValid();
++    }
++
++    public static List<StructureStart> startsForFeature(ServerLevel level, SectionPos sectionPos, StructureType<?> structure) {
++        Map<Structure, LongSet> allrefs = level.getChunk(sectionPos.x(), sectionPos.z(), ChunkStatus.STRUCTURE_REFERENCES).getAllReferences();
++        List<StructureStart> result = new ArrayList<>();
++        for (var entry: allrefs.entrySet())
++        {
++            Structure existing = entry.getKey();
++            if (existing.type() == structure)
++            {
++                level.structureManager().fillStartsForStructure(existing, entry.getValue(), result::add);
++            }
++        }
++        return result;
++    }
++}

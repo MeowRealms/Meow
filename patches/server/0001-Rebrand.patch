@@ -1,0 +1,99 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: ItsFlicker <1812496278@qq.com>
+Date: Mon, 5 Aug 2024 11:16:59 +0800
+Subject: [PATCH] Rebrand
+
+
+diff --git a/build.gradle.kts b/build.gradle.kts
+index 6e1c71f4073dc4b43787a3f6599453d9db7bf8bb..40bb1f744f3c65f4983d3e5063b0b9e82be7103d 100644
+--- a/build.gradle.kts
++++ b/build.gradle.kts
+@@ -13,7 +13,7 @@ configurations.named(log4jPlugins.compileClasspathConfigurationName) {
+ val alsoShade: Configuration by configurations.creating
+ 
+ dependencies {
+-    implementation(project(":leaf-api")) // Gale start - project setup - Depend on own API // Leaf
++    implementation(project(":meow-api")) // Gale start - project setup - Depend on own API // Leaf // Meow
+ 
+     // Leaf start - Leaf Config
+     implementation("com.github.thatsmusic99:ConfigurationMaster-API:v2.0.0-rc.2") {
+@@ -122,14 +122,14 @@ tasks.jar {
+         val gitBranch = git("rev-parse", "--abbrev-ref", "HEAD").getText().trim() // Paper
+         attributes(
+             "Main-Class" to "org.bukkit.craftbukkit.Main",
+-            "Implementation-Title" to "Leaf", // Gale - branding changes // Leaf
++            "Implementation-Title" to "Meow", // Gale - branding changes // Leaf // Meow
+             "Implementation-Version" to implementationVersion,
+             "Implementation-Vendor" to date, // Paper
+-            "Specification-Title" to "Leaf", // Gale - branding changes // Leaf
++            "Specification-Title" to "Meow", // Gale - branding changes // Leaf // Meow
+             "Specification-Version" to project.version,
+-            "Specification-Vendor" to "Winds Studio", // Gale - branding changes // Leaf
+-            "Brand-Id" to "winds-studio:leaf", // Gale - branding changes // Leaf
+-            "Brand-Name" to "Leaf", // Gale - branding changes // Leaf
++            "Specification-Vendor" to "Meow Realms", // Gale - branding changes // Leaf // Meow
++            "Brand-Id" to "meow-realms:meow", // Gale - branding changes // Leaf // Meow
++            "Brand-Name" to "Meow", // Gale - branding changes // Leaf // Meow
+             "Build-Number" to (build ?: ""),
+             "Build-Time" to Instant.now().toString(),
+             "Git-Branch" to gitBranch, // Paper
+diff --git a/src/main/java/com/destroystokyo/paper/console/PaperConsole.java b/src/main/java/com/destroystokyo/paper/console/PaperConsole.java
+index b5f3f213da8a40d5184098af017c8e2669c3e58c..2fd6a593a5d14204ed6e504ad461e122749996f4 100644
+--- a/src/main/java/com/destroystokyo/paper/console/PaperConsole.java
++++ b/src/main/java/com/destroystokyo/paper/console/PaperConsole.java
+@@ -17,7 +17,7 @@ public final class PaperConsole extends SimpleTerminalConsole {
+     @Override
+     protected LineReader buildReader(LineReaderBuilder builder) {
+         builder
+-                .appName("Leaf") // Gale - branding changes // Leaf
++                .appName("Meow") // Gale - branding changes // Leaf // Meow
+                 .variable(LineReader.HISTORY_FILE, java.nio.file.Paths.get(".console_history"))
+                 .completer(new ConsoleCommandCompleter(this.server))
+                 .option(LineReader.Option.COMPLETE_IN_WORD, true);
+diff --git a/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java b/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java
+index 9d003c2ae45a057c0274a34fe5012cf17d1a2681..225a957d91cbe2209c4711c41c7023a3c6f78e1b 100644
+--- a/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java
++++ b/src/main/java/io/papermc/paper/ServerBuildInfoImpl.java
+@@ -34,6 +34,7 @@ public record ServerBuildInfoImpl(
+     private static final String BRAND_GALE_NAME = "Gale"; // Gale - branding changes
+     private static final String BRAND_PURPUR_NAME = "Purpur"; // Purpur
+     private static final String BRAND_LEAF_NAME = "Leaf"; // Leaf
++    private static final String BRAND_MEOW_NAME = "Meow"; // Meow
+ 
+     private static final String BUILD_DEV = "DEV";
+ 
+@@ -45,9 +46,9 @@ public record ServerBuildInfoImpl(
+         this(
+             getManifestAttribute(manifest, ATTRIBUTE_BRAND_ID)
+                 .map(Key::key)
+-                .orElse(BRAND_LEAF_ID), // Gale - branding changes // Leaf
++                .orElse(BRAND_MEOW_ID), // Gale - branding changes // Leaf // Meow
+             getManifestAttribute(manifest, ATTRIBUTE_BRAND_NAME)
+-                .orElse(BRAND_LEAF_NAME), // Gale - branding changes // Leaf
++                .orElse(BRAND_MEOW_NAME), // Gale - branding changes // Leaf // Meow
+             SharedConstants.getCurrentVersion().getId(),
+             SharedConstants.getCurrentVersion().getName(),
+             getManifestAttribute(manifest, ATTRIBUTE_BUILD_NUMBER)
+@@ -67,7 +68,8 @@ public record ServerBuildInfoImpl(
+         return brandId.equals(this.brandId)
+                 || brandId.equals(BRAND_PAPER_ID)
+                 || brandId.equals(BRAND_GALE_ID)
+-                || brandId.equals(BRAND_PURPUR_ID); // Gale - branding changes // Leaf
++                || brandId.equals(BRAND_PURPUR_ID)
++                || brandId.equals(BRAND_LEAF_ID); // Gale - branding changes // Leaf // Meow
+     }
+ 
+     @Override
+diff --git a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
+index e220f5601f6b92b7b280ce8ebe64117d30192b0e..3e99efccd536bba2b7390507628cbeb0689f3d8e 100644
+--- a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
++++ b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
+@@ -11,7 +11,7 @@ public final class Versioning {
+     public static String getBukkitVersion() {
+         String result = "Unknown-Version";
+ 
+-        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/cn.dreeam.leaf/leaf-api/pom.properties"); // Gale - branding changes // Leaf
++        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/io.github.itsflicker.meow/meow-api/pom.properties"); // Gale - branding changes // Leaf // Meow
+         Properties properties = new Properties();
+ 
+         if (stream != null) {

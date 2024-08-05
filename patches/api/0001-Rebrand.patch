@@ -1,0 +1,24 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: ItsFlicker <1812496278@qq.com>
+Date: Mon, 5 Aug 2024 01:01:55 +0800
+Subject: [PATCH] Rebrand
+
+
+diff --git a/src/main/java/io/papermc/paper/ServerBuildInfo.java b/src/main/java/io/papermc/paper/ServerBuildInfo.java
+index 9fa8d7fac5bf415b40c3a9a38108fa5476ed7619..da458a4741a6deeb44895dd6a1f95970840f4bea 100644
+--- a/src/main/java/io/papermc/paper/ServerBuildInfo.java
++++ b/src/main/java/io/papermc/paper/ServerBuildInfo.java
+@@ -39,6 +39,13 @@ public interface ServerBuildInfo {
+     Key BRAND_LEAF_ID = Key.key("winds-studio", "leaf");
+     // Leaf end
+ 
++    // Meow start
++    /**
++     * The brand id for Meow.
++     */
++    Key BRAND_MEOW_ID = Key.key("meow-realms", "meow");
++    // Meow end
++
+     /**
+      * Gets the {@code ServerBuildInfo}.
+      *

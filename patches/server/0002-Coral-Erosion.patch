@@ -1,0 +1,350 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: ItsFlicker <1812496278@qq.com>
+Date: Mon, 5 Aug 2024 12:27:39 +0800
+Subject: [PATCH] Coral-Erosion
+
+
+diff --git a/src/main/java/net/minecraft/world/level/block/Blocks.java b/src/main/java/net/minecraft/world/level/block/Blocks.java
+index 6a2faa69e86123aeb902c2792bb225a6eaf8ba53..61f2e0c79235587ae4f081a5d59cb46e1f48004e 100644
+--- a/src/main/java/net/minecraft/world/level/block/Blocks.java
++++ b/src/main/java/net/minecraft/world/level/block/Blocks.java
+@@ -38,6 +38,9 @@ import net.minecraft.world.level.block.state.properties.WoodType;
+ import net.minecraft.world.level.material.Fluids;
+ import net.minecraft.world.level.material.MapColor;
+ import net.minecraft.world.level.material.PushReaction;
++import org.meowrealms.meow.block.DeadCoralFanBlock;
++import org.meowrealms.meow.block.DeadCoralPlantBlock;
++import org.meowrealms.meow.block.DeadCoralWallFanBlock;
+ 
+ public class Blocks {
+     private static final BlockBehaviour.StatePredicate NOT_CLOSED_SHULKER = (state, world, pos) -> !(
+@@ -5513,7 +5516,7 @@ public class Blocks {
+     );
+     public static final Block DEAD_TUBE_CORAL = register(
+         "dead_tube_coral",
+-        new BaseCoralPlantBlock(
++        new DeadCoralPlantBlock(
+             BlockBehaviour.Properties.of()
+                 .mapColor(MapColor.COLOR_GRAY)
+                 .forceSolidOn()
+@@ -5525,7 +5528,7 @@ public class Blocks {
+     );
+     public static final Block DEAD_BRAIN_CORAL = register(
+         "dead_brain_coral",
+-        new BaseCoralPlantBlock(
++        new DeadCoralPlantBlock(
+             BlockBehaviour.Properties.of()
+                 .mapColor(MapColor.COLOR_GRAY)
+                 .forceSolidOn()
+@@ -5537,7 +5540,7 @@ public class Blocks {
+     );
+     public static final Block DEAD_BUBBLE_CORAL = register(
+         "dead_bubble_coral",
+-        new BaseCoralPlantBlock(
++        new DeadCoralPlantBlock(
+             BlockBehaviour.Properties.of()
+                 .mapColor(MapColor.COLOR_GRAY)
+                 .forceSolidOn()
+@@ -5549,7 +5552,7 @@ public class Blocks {
+     );
+     public static final Block DEAD_FIRE_CORAL = register(
+         "dead_fire_coral",
+-        new BaseCoralPlantBlock(
++        new DeadCoralPlantBlock(
+             BlockBehaviour.Properties.of()
+                 .mapColor(MapColor.COLOR_GRAY)
+                 .forceSolidOn()
+@@ -5561,7 +5564,7 @@ public class Blocks {
+     );
+     public static final Block DEAD_HORN_CORAL = register(
+         "dead_horn_coral",
+-        new BaseCoralPlantBlock(
++        new DeadCoralPlantBlock(
+             BlockBehaviour.Properties.of()
+                 .mapColor(MapColor.COLOR_GRAY)
+                 .forceSolidOn()
+@@ -5633,7 +5636,7 @@ public class Blocks {
+     );
+     public static final Block DEAD_TUBE_CORAL_FAN = register(
+         "dead_tube_coral_fan",
+-        new BaseCoralFanBlock(
++        new DeadCoralFanBlock(
+             BlockBehaviour.Properties.of()
+                 .mapColor(MapColor.COLOR_GRAY)
+                 .forceSolidOn()
+@@ -5645,7 +5648,7 @@ public class Blocks {
+     );
+     public static final Block DEAD_BRAIN_CORAL_FAN = register(
+         "dead_brain_coral_fan",
+-        new BaseCoralFanBlock(
++        new DeadCoralFanBlock(
+             BlockBehaviour.Properties.of()
+                 .mapColor(MapColor.COLOR_GRAY)
+                 .forceSolidOn()
+@@ -5657,7 +5660,7 @@ public class Blocks {
+     );
+     public static final Block DEAD_BUBBLE_CORAL_FAN = register(
+         "dead_bubble_coral_fan",
+-        new BaseCoralFanBlock(
++        new DeadCoralFanBlock(
+             BlockBehaviour.Properties.of()
+                 .mapColor(MapColor.COLOR_GRAY)
+                 .forceSolidOn()
+@@ -5669,7 +5672,7 @@ public class Blocks {
+     );
+     public static final Block DEAD_FIRE_CORAL_FAN = register(
+         "dead_fire_coral_fan",
+-        new BaseCoralFanBlock(
++        new DeadCoralFanBlock(
+             BlockBehaviour.Properties.of()
+                 .mapColor(MapColor.COLOR_GRAY)
+                 .forceSolidOn()
+@@ -5681,7 +5684,7 @@ public class Blocks {
+     );
+     public static final Block DEAD_HORN_CORAL_FAN = register(
+         "dead_horn_coral_fan",
+-        new BaseCoralFanBlock(
++        new DeadCoralFanBlock(
+             BlockBehaviour.Properties.of()
+                 .mapColor(MapColor.COLOR_GRAY)
+                 .forceSolidOn()
+@@ -5753,7 +5756,7 @@ public class Blocks {
+     );
+     public static final Block DEAD_TUBE_CORAL_WALL_FAN = register(
+         "dead_tube_coral_wall_fan",
+-        new BaseCoralWallFanBlock(
++        new DeadCoralWallFanBlock(
+             BlockBehaviour.Properties.of()
+                 .mapColor(MapColor.COLOR_GRAY)
+                 .forceSolidOn()
+@@ -5766,7 +5769,7 @@ public class Blocks {
+     );
+     public static final Block DEAD_BRAIN_CORAL_WALL_FAN = register(
+         "dead_brain_coral_wall_fan",
+-        new BaseCoralWallFanBlock(
++        new DeadCoralWallFanBlock(
+             BlockBehaviour.Properties.of()
+                 .mapColor(MapColor.COLOR_GRAY)
+                 .forceSolidOn()
+@@ -5779,7 +5782,7 @@ public class Blocks {
+     );
+     public static final Block DEAD_BUBBLE_CORAL_WALL_FAN = register(
+         "dead_bubble_coral_wall_fan",
+-        new BaseCoralWallFanBlock(
++        new DeadCoralWallFanBlock(
+             BlockBehaviour.Properties.of()
+                 .mapColor(MapColor.COLOR_GRAY)
+                 .forceSolidOn()
+@@ -5792,7 +5795,7 @@ public class Blocks {
+     );
+     public static final Block DEAD_FIRE_CORAL_WALL_FAN = register(
+         "dead_fire_coral_wall_fan",
+-        new BaseCoralWallFanBlock(
++        new DeadCoralWallFanBlock(
+             BlockBehaviour.Properties.of()
+                 .mapColor(MapColor.COLOR_GRAY)
+                 .forceSolidOn()
+@@ -5805,7 +5808,7 @@ public class Blocks {
+     );
+     public static final Block DEAD_HORN_CORAL_WALL_FAN = register(
+         "dead_horn_coral_wall_fan",
+-        new BaseCoralWallFanBlock(
++        new DeadCoralWallFanBlock(
+             BlockBehaviour.Properties.of()
+                 .mapColor(MapColor.COLOR_GRAY)
+                 .forceSolidOn()
+diff --git a/src/main/java/org/meowrealms/meow/DeadCoralToSandHelper.java b/src/main/java/org/meowrealms/meow/DeadCoralToSandHelper.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..27c52f00c285fde3c08632438af95dcccb3c6e76
+--- /dev/null
++++ b/src/main/java/org/meowrealms/meow/DeadCoralToSandHelper.java
+@@ -0,0 +1,63 @@
++package org.meowrealms.meow;
++
++import net.minecraft.core.BlockPos;
++import net.minecraft.sounds.SoundEvents;
++import net.minecraft.sounds.SoundSource;
++import net.minecraft.util.RandomSource;
++import net.minecraft.world.entity.item.ItemEntity;
++import net.minecraft.world.item.Item;
++import net.minecraft.world.item.ItemStack;
++import net.minecraft.world.item.Items;
++import net.minecraft.world.level.Level;
++import net.minecraft.world.level.block.state.BlockState;
++import net.minecraft.world.level.material.FluidState;
++import net.minecraft.world.level.material.Fluids;
++import net.minecraft.world.phys.Vec3;
++
++public class DeadCoralToSandHelper {
++    protected static final double BREAK_CHANCE = 0.03;
++
++    public static int getSandDropDelay(RandomSource random) {
++        // 16-32s per sand, 24 on average
++        // This comes out to about the same as 1 villager in a max rate iron farm, which is also infinitely auto.
++        return 320 + random.nextInt(320);
++    }
++
++    public static boolean tryDropSand(BlockState state, Level level, BlockPos pos, RandomSource random) {
++        FluidState fluidState = level.getFluidState(pos);
++        if (!fluidState.is(Fluids.WATER)) {
++            return false;
++        }
++
++        Vec3 waterVelocity = fluidState.getFlow(level, pos);
++        if (waterVelocity.equals(Vec3.ZERO)) {
++            return false;
++        }
++
++        if (!level.isClientSide) {
++            Vec3 sandVelocity = waterVelocity.scale(0.1);
++            Item sandItem =
++                state.getBlock().getLootTable().location().getPath().contains("fire") ? Items.RED_SAND : Items.SAND;
++            ItemEntity itemEntity = new ItemEntity(
++                level,
++                pos.getX() + 0.5,
++                pos.getY(),
++                pos.getZ() + 0.5,
++                new ItemStack(sandItem),
++                sandVelocity.x(),
++                sandVelocity.y(),
++                sandVelocity.z());
++            itemEntity.setDefaultPickUpDelay();
++            level.addFreshEntity(itemEntity);
++        }
++
++        if (random.nextFloat() < BREAK_CHANCE) {
++            level.removeBlock(pos, false);
++            level.playSound(
++                null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.SAND_BREAK, SoundSource.BLOCKS, 0.5f, 1f);
++            return false;
++        }
++
++        return true;
++    }
++}
+diff --git a/src/main/java/org/meowrealms/meow/block/DeadCoralFanBlock.java b/src/main/java/org/meowrealms/meow/block/DeadCoralFanBlock.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..cb3619d73ce8d625ab04ade847a47aecf7877b1e
+--- /dev/null
++++ b/src/main/java/org/meowrealms/meow/block/DeadCoralFanBlock.java
+@@ -0,0 +1,36 @@
++package org.meowrealms.meow.block;
++
++import net.minecraft.core.BlockPos;
++import net.minecraft.core.Direction;
++import net.minecraft.server.level.ServerLevel;
++import net.minecraft.util.RandomSource;
++import net.minecraft.world.level.Level;
++import net.minecraft.world.level.LevelAccessor;
++import net.minecraft.world.level.block.BaseCoralFanBlock;
++import net.minecraft.world.level.block.state.BlockState;
++import org.meowrealms.meow.DeadCoralToSandHelper;
++
++public class DeadCoralFanBlock extends BaseCoralFanBlock {
++    public DeadCoralFanBlock(Properties settings) {
++        super(settings);
++    }
++
++    @Override
++    protected void onPlace(BlockState state, Level world, BlockPos pos, BlockState oldState, boolean notify) {
++        world.scheduleTick(pos, this, DeadCoralToSandHelper.getSandDropDelay(world.getRandom()));
++        super.onPlace(state, world, pos, oldState, notify);
++    }
++
++    @Override
++    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor world, BlockPos pos, BlockPos neighborPos) {
++        world.scheduleTick(pos, this, DeadCoralToSandHelper.getSandDropDelay(world.getRandom()));
++        return super.updateShape(state, direction, neighborState, world, pos, neighborPos);
++    }
++
++    @Override
++    protected void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
++        if (DeadCoralToSandHelper.tryDropSand(state, world, pos, random)) {
++            world.scheduleTick(pos, this, DeadCoralToSandHelper.getSandDropDelay(random));
++        }
++    }
++}
+diff --git a/src/main/java/org/meowrealms/meow/block/DeadCoralPlantBlock.java b/src/main/java/org/meowrealms/meow/block/DeadCoralPlantBlock.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..bce4afecab74d6a5442aced710353cd3eaedc505
+--- /dev/null
++++ b/src/main/java/org/meowrealms/meow/block/DeadCoralPlantBlock.java
+@@ -0,0 +1,36 @@
++package org.meowrealms.meow.block;
++
++import net.minecraft.core.BlockPos;
++import net.minecraft.core.Direction;
++import net.minecraft.server.level.ServerLevel;
++import net.minecraft.util.RandomSource;
++import net.minecraft.world.level.Level;
++import net.minecraft.world.level.LevelAccessor;
++import net.minecraft.world.level.block.BaseCoralPlantBlock;
++import net.minecraft.world.level.block.state.BlockState;
++import org.meowrealms.meow.DeadCoralToSandHelper;
++
++public class DeadCoralPlantBlock extends BaseCoralPlantBlock {
++    public DeadCoralPlantBlock(Properties settings) {
++        super(settings);
++    }
++
++    @Override
++    protected void onPlace(BlockState state, Level world, BlockPos pos, BlockState oldState, boolean notify) {
++        world.scheduleTick(pos, this, DeadCoralToSandHelper.getSandDropDelay(world.getRandom()));
++        super.onPlace(state, world, pos, oldState, notify);
++    }
++
++    @Override
++    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor world, BlockPos pos, BlockPos neighborPos) {
++        world.scheduleTick(pos, this, DeadCoralToSandHelper.getSandDropDelay(world.getRandom()));
++        return super.updateShape(state, direction, neighborState, world, pos, neighborPos);
++    }
++
++    @Override
++    protected void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
++        if (DeadCoralToSandHelper.tryDropSand(state, world, pos, random)) {
++            world.scheduleTick(pos, this, DeadCoralToSandHelper.getSandDropDelay(random));
++        }
++    }
++}
+diff --git a/src/main/java/org/meowrealms/meow/block/DeadCoralWallFanBlock.java b/src/main/java/org/meowrealms/meow/block/DeadCoralWallFanBlock.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..b168810aa18b4d5cc1863f1e56d04309898b84fd
+--- /dev/null
++++ b/src/main/java/org/meowrealms/meow/block/DeadCoralWallFanBlock.java
+@@ -0,0 +1,36 @@
++package org.meowrealms.meow.block;
++
++import net.minecraft.core.BlockPos;
++import net.minecraft.core.Direction;
++import net.minecraft.server.level.ServerLevel;
++import net.minecraft.util.RandomSource;
++import net.minecraft.world.level.Level;
++import net.minecraft.world.level.LevelAccessor;
++import net.minecraft.world.level.block.BaseCoralWallFanBlock;
++import net.minecraft.world.level.block.state.BlockState;
++import org.meowrealms.meow.DeadCoralToSandHelper;
++
++public class DeadCoralWallFanBlock extends BaseCoralWallFanBlock {
++    public DeadCoralWallFanBlock(Properties settings) {
++        super(settings);
++    }
++
++    @Override
++    protected void onPlace(BlockState state, Level world, BlockPos pos, BlockState oldState, boolean notify) {
++        world.scheduleTick(pos, this, DeadCoralToSandHelper.getSandDropDelay(world.getRandom()));
++        super.onPlace(state, world, pos, oldState, notify);
++    }
++
++    @Override
++    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor world, BlockPos pos, BlockPos neighborPos) {
++        world.scheduleTick(pos, this, DeadCoralToSandHelper.getSandDropDelay(world.getRandom()));
++        return super.updateShape(state, direction, neighborState, world, pos, neighborPos);
++    }
++
++    @Override
++    protected void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
++        if (DeadCoralToSandHelper.tryDropSand(state, world, pos, random)) {
++            world.scheduleTick(pos, this, DeadCoralToSandHelper.getSandDropDelay(random));
++        }
++    }
++}
