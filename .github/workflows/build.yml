@@ -21,10 +21,20 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '21'
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
       - name: Configure Git User Details
         run: git config --global user.email "actions@github.com" && git config --global user.name "Github Actions"
       - name: Apply Patches
         run: ./gradlew applyPatches
-      - name: Build
-        run: ./gradlew build
+      - name: Create MojmapPaperclipJar
+        run: ./gradlew createMojmapPaperclipJar
+      - name: Rename Paperclip Jar
+        run: |
+          mv build/libs/meow-paperclip-1.21-R0.1-SNAPSHOT-mojmap.jar ./meow-1.21.jar
+      - name: Upload Meow
+        uses: actions/upload-artifact@main
+        with:
+          name: Meow 1.21
+          path: ./meow-1.21.jar
